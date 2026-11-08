@@ -57,10 +57,10 @@ export const HOME = {
   de: {
     path: '',
     alt: 'en/',
-    title: 'Digitaler Produktpass Open Source: Batteriepass erstellen',
-    description: 'Passwerk erstellt digitale Produktpässe und EU-Batteriepässe mit QR-Code. Quellcode offen, ohne Abo, gehostet auf GitHub Pages. Mit KI-Import aus Datenblättern.',
+    title: 'Digitaler Produktpass, Open Source und kostenlos | Passwerk',
+    description: 'Digitaler Produktpass als Open Source: Passwerk macht aus einer JSON-Datei EU-Batteriepässe mit QR-Code. Ohne Abo, gehostet auf GitHub Pages, mit KI-Import.',
     h1: 'Digitaler Produktpass aus einer JSON-Datei',
-    lede: 'Batteriepass mit QR-Code, gehostet auf GitHub Pages, ohne Abo.',
+    lede: 'Digitaler Produktpass mit QR-Code, gehostet auf GitHub Pages, ohne Abo.',
     primary: 'Pass im Editor anlegen',
     secondary: 'Quellcode auf GitHub',
     terms: 'Kostenlos, auch im Unternehmen. Lizenz PolyForm Shield 1.0.0.',
@@ -119,10 +119,10 @@ export const HOME = {
   en: {
     path: 'en/',
     alt: '',
-    title: 'Open-source digital product passport and battery passport',
-    description: 'Passwerk turns a JSON file into an EU digital product passport or battery passport with a QR code. Source available, no subscription, hosted on GitHub Pages.',
+    title: 'Digital product passport, open source and free | Passwerk',
+    description: 'Digital product passport generator, source available: Passwerk turns a JSON file into an EU battery passport with a QR code. No subscription, on GitHub Pages.',
     h1: 'Digital product passports from one JSON file',
-    lede: 'Battery passports with QR codes, hosted on GitHub Pages, no subscription.',
+    lede: 'Digital product passports with QR codes, on GitHub Pages, no subscription.',
     primary: 'Create a passport',
     secondary: 'Source on GitHub',
     terms: 'Free, also for companies. Licence PolyForm Shield 1.0.0.',
@@ -183,11 +183,11 @@ export const HOME = {
 export const GUIDES = [
   {
     path: 'batteriepass/', lang: 'de', alt: 'en/battery-passport/',
-    title: 'Batteriepass erstellen: Pflichtangaben nach Anhang XIII',
-    description: 'Welche Batterien ab 18.02.2027 einen digitalen Batteriepass brauchen, welche Angaben öffentlich sein müssen und wie Sie ihn kostenlos erstellen.',
+    title: 'Batteriepass erstellen: Pflichtangaben und QR-Code | Passwerk',
+    description: 'Batteriepass erstellen: welche Batterien ab 18.02.2027 einen Pass brauchen, welche Angaben öffentlich sein müssen und wie es kostenlos geht.',
     h1: 'Batteriepass erstellen',
-    lede: 'Ab dem 18. Februar 2027 braucht jede LMT-, Industrie- und Elektrofahrzeugbatterie einen digitalen Pass. Hier steht, was hineingehört und wer was sehen darf.',
-    body: `
+    lede: 'Batteriepass erstellen bedeutet, die öffentlichen Angaben aus Anhang XIII zu sammeln, jeder Batterie eine eindeutige Kennung zu geben und den Pass per QR-Code erreichbar zu machen. Pflicht ist das ab dem 18. Februar 2027 für LMT-, Industrie- und Elektrofahrzeugbatterien.',
+    body: `{{SHOT}}
 <h2>Welche Batterien einen Pass brauchen</h2>
 <p>Nach Art. 77 Abs. 1 der Batterieverordnung braucht ab dem 18. Februar 2027 jede Batterie einen Batteriepass, die in Verkehr gebracht oder in Betrieb genommen wird und zu einer dieser Gruppen gehört:</p>
 <ul>
@@ -240,10 +240,10 @@ export const GUIDES = [
 
   {
     path: 'batteriepass-pflicht-check/', lang: 'de', alt: null,
-    title: 'Batteriepass Pflicht? Der Check in vier Fragen',
-    description: 'Betrifft Sie der EU-Batteriepass? Vier Fragen zu Batterieart, Kapazität, Rolle und Datum. Das Ergebnis nennt Pflichten und Fundstellen aus der Batterieverordnung.',
+    title: 'Batteriepass Pflicht? Der Check in vier Fragen | Passwerk',
+    description: 'Batteriepass Pflicht prüfen: vier Fragen zu Batterieart, Kapazität, Rolle und Datum. Das Ergebnis nennt Pflichten und Fundstellen aus der Batterieverordnung.',
     h1: 'Brauchen Sie einen Batteriepass?',
-    lede: 'Vier Fragen zu Ihrer Batterie. Das Ergebnis zeigt, welche Kennzeichnungspflichten der Verordnung (EU) 2023/1542 gelten, jeweils mit Fundstelle.',
+    lede: 'Batteriepass-Pflicht in vier Fragen prüfen: Batterieart, Kapazität, Ihre Rolle und das Datum. Das Ergebnis nennt die Kennzeichnungspflichten der Verordnung (EU) 2023/1542, jeweils mit Fundstelle.',
     body: `{{CHECK}}
 
 <h2>So entscheidet der Check</h2>
@@ -265,10 +265,10 @@ export const GUIDES = [
   },
   {
     path: 'digitaler-produktpass-ab-wann/', lang: 'de', alt: null,
-    title: 'Digitaler Produktpass: Ab wann ist er Pflicht?',
-    description: 'Batteriepass ab 18.02.2027, EU-Register seit Juli 2026, Textilien und Möbel folgen per delegiertem Rechtsakt. Alle Fristen mit Fundstelle.',
+    title: 'Digitaler Produktpass: Ab wann ist er Pflicht? | Passwerk',
+    description: 'Digitaler Produktpass ab wann? Für Batterien ab 18.02.2027, für Textilien und Möbel erst mit dem delegierten Rechtsakt. Alle Fristen mit Fundstelle.',
     h1: 'Ab wann der digitale Produktpass Pflicht ist',
-    lede: 'Zuerst für Batterien, danach Produktgruppe für Produktgruppe. Hier stehen die Termine, die schon im Gesetz stehen, und was noch offen ist.',
+    lede: 'Der digitale Produktpass wird ab dem 18. Februar 2027 Pflicht, zuerst für Batterien. Textilien, Möbel und andere Produkte folgen erst, wenn der delegierte Rechtsakt für ihre Gruppe gilt.',
     body: `
 <h2>Batterien: feste Termine</h2>
 <div class="table-wrap"><table>
@@ -301,10 +301,10 @@ export const GUIDES = [
 
   {
     path: 'digitaler-produktpass-beispiel/', lang: 'de', alt: null,
-    title: 'Digitaler Produktpass: Beispiel mit QR-Code zum Ansehen',
-    description: 'Ein vollständiger Beispiel-Batteriepass für einen E-Bike-Akku: Passseite, QR-Code zum Scannen, JSON-Daten und alle Pflichtfelder mit Fundstelle.',
+    title: 'Digitaler Produktpass: Beispiel mit QR-Code | Passwerk',
+    description: 'Digitaler Produktpass als Beispiel: ein vollständiger Batteriepass für einen E-Bike-Akku mit QR-Code zum Scannen, JSON-Daten und allen Pflichtfeldern.',
     h1: 'Beispiel für einen digitalen Produktpass',
-    lede: 'Ein erfundener E-Bike-Akku mit allen öffentlichen Angaben, so wie Passwerk ihn veröffentlicht. Scannen Sie den Code mit dem Handy oder öffnen Sie die Seiten direkt.',
+    lede: 'Dieser digitale Produktpass gehört zu einem erfundenen E-Bike-Akku und zeigt alle öffentlichen Angaben, so wie Passwerk sie veröffentlicht. Scannen Sie den Code mit dem Handy oder öffnen Sie die Seiten direkt.',
     body: `
 <figure class="example">
 <img src="../assets/img/passseite-handy.webp" width="780" height="1688" alt="Passseite der Seriennummer AK500-000123 auf dem Handy" fetchpriority="high">
@@ -339,11 +339,11 @@ export const GUIDES = [
 
   {
     path: 'dpp-software/', lang: 'de', alt: 'en/dpp-software/',
-    title: 'DPP-Software: Digitale Produktpässe selbst hosten',
-    description: 'Was DPP-Software nach Art. 77 und 78 können muss, was Passwerk kostenlos abdeckt und wann Sie zusätzlich einen Dienstleister brauchen.',
+    title: 'DPP-Software kostenlos: Produktpässe selbst hosten | Passwerk',
+    description: 'DPP-Software kostenlos und selbst gehostet: was sie nach Art. 77 und 78 können muss, was Passwerk abdeckt und wann Sie einen Dienstleister brauchen.',
     h1: 'DPP-Software, die Sie selbst betreiben',
-    lede: 'Passwerk deckt den öffentlichen Teil eines Produktpasses ab. Für Zugriffsrechte und Betriebsdaten brauchen Sie mehr. Die Tabelle zeigt, wo die Grenze liegt.',
-    body: `
+    lede: 'DPP-Software muss Pflichtangaben prüfen, jeder Batterie eine eindeutige Kennung mit QR-Code geben und den Pass über Jahre erreichbar halten. Passwerk erledigt den öffentlichen Teil kostenlos, für Zugriffsrechte und Betriebsdaten brauchen Sie ein weiteres System.',
+    body: `{{SHOT}}
 <h2>Was eine DPP-Software leisten muss</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>Anforderung</th><th>Fundstelle</th><th>Passwerk</th></tr></thead>
@@ -379,11 +379,11 @@ export const GUIDES = [
 
   {
     path: 'en/battery-passport/', lang: 'en', alt: 'batteriepass/',
-    title: 'EU battery passport: required data under Annex XIII',
-    description: 'Which batteries need a digital battery passport from 18 February 2027, which data must be public, who may see the rest, and how to create one for free.',
+    title: 'EU battery passport: required data and QR code | Passwerk',
+    description: 'EU battery passport: which batteries need one from 18 February 2027, which data must be public, who may see the rest, and how to create one for free.',
     h1: 'Create an EU battery passport',
-    lede: 'From 18 February 2027 every LMT, industrial and electric vehicle battery needs a digital passport. This page lists what goes into it and who may see what.',
-    body: `
+    lede: 'An EU battery passport is mandatory from 18 February 2027 for every LMT, industrial (above 2 kWh) and electric vehicle battery. It carries the public data from Annex XIII and a contact for everything else.',
+    body: `{{SHOT}}
 <h2>Which batteries need a passport</h2>
 <p>Under Art. 77(1) of the Batteries Regulation, from 18 February 2027 every battery placed on the market or put into service needs a battery passport if it is:</p>
 <ul>
@@ -432,11 +432,11 @@ export const GUIDES = [
 
   {
     path: 'en/dpp-software/', lang: 'en', alt: 'dpp-software/',
-    title: 'DPP software you host yourself: what Passwerk covers',
-    description: 'What digital product passport software must do under Art. 77 and 78, what Passwerk covers for free and when you need a service provider as well.',
+    title: 'DPP software, free and self-hosted | Passwerk',
+    description: 'DPP software, free and self-hosted: what digital product passport software must do under Art. 77 and 78, and where Passwerk stops.',
     h1: 'DPP software you run yourself',
-    lede: 'Passwerk covers the public part of a product passport. Access rights and operating data need more. The table shows where the line is.',
-    body: `
+    lede: 'DPP software has to check required data, give every battery a unique identifier with a QR code and keep the passport online for years. Passwerk covers the public part for free; access rights and operating data need another system.',
+    body: `{{SHOT}}
 <h2>What DPP software has to do</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>Requirement</th><th>Reference</th><th>Passwerk</th></tr></thead>

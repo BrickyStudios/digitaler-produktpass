@@ -195,7 +195,8 @@ function guide(BASE, g) {
   const body = g.body
     .replace('{{QR_ITEM}}', qrSvg(`${BASE}/${DEMO.item}`).replace('aria-label="QR-Code"', `aria-label="QR-Code: ${BASE}/${DEMO.item}"`))
     .replace('{{DEMO_JSON}}', esc(HOME.de.json))
-    .replace('{{CHECK}}', CHECK_FORM(prefix));
+    .replace('{{CHECK}}', CHECK_FORM(prefix))
+    .replace('{{SHOT}}', `<figure class="lead-shot"><img src="${prefix}assets/img/passseite.webp" width="1640" height="1960" alt="${de ? 'Passseite eines Beispiel-Akkus mit GTIN, Seriennummer, QR-Code und Pflichtfeldern' : 'Passport page of a sample battery with GTIN, serial number, QR code and required fields'}" fetchpriority="high"><figcaption>${de ? 'So sieht eine Passseite aus Passwerk aus.' : 'A passport page made with Passwerk.'} <a href="${prefix}${DEMO.item}">${de ? 'Beispiel öffnen' : 'Open the example'}</a></figcaption></figure>`);
   return `${head({ BASE, page: g, prefix, schema })}
 <body class="doc">
 ${nav(g.lang, prefix)}

@@ -174,6 +174,9 @@ strong, b { font-weight: 500; }
 .prose a, .qa a, .sources a, .notfound a { color: var(--color-ink); text-decoration-color: var(--color-accent); }
 .prose pre { padding: var(--space-lg); background: var(--color-graphite); color: var(--color-accent-2); border-radius: var(--radius-card); margin-bottom: var(--space-md); }
 .prose table { margin-bottom: var(--space-md); }
+.lead-shot { margin: 0 0 var(--space-xl); }
+.lead-shot img { width: 100%; max-height: 420px; object-fit: cover; object-position: top; border-radius: var(--radius-card); border: var(--rule-hair) solid var(--color-rule); }
+.lead-shot figcaption { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-ink-2); }
 .example { margin: 0 0 var(--space-xl); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--gap-columns); align-items: center; }
 .example img { border-radius: var(--radius-card); border: var(--rule-hair) solid var(--color-rule); max-height: 560px; width: auto; }
 .example figcaption { display: grid; gap: var(--space-md); color: var(--color-ink-2); }
