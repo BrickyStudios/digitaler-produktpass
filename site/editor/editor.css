@@ -1,6 +1,7 @@
 /* Hallmark · shape: app screen · genre: modern-minimal · theme: Cobalt (deal 3/3, seed open-source-generator-digital-product-c4a3·c1f30e3e·2026-11-08·r0)
  * nav: top bar, wordmark and two help links · signature: the field list checked live against Annex XIII beside the passport it produces · states: empty draft, incomplete (error list), complete, AI loading, AI error, AI suggestions marked
  * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · dismissed 26a · the preview iframe shows a 2px ring on .preview via :focus-within (checked in Chromium: outline solid while focused); the probe calls blur() on the iframe, which does not clear focus inside it */
 /* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V3 · weakest: V, a form beside a preview is the category's familiar shape; kept on purpose so the tool disappears into the task, the legal reference on every field carries the specificity */
 @import url("../assets/fonts.css");
 @import url("./tokens.css");
@@ -87,7 +88,8 @@ code { font-family: var(--font-outlier); font-size: 0.92em; }
 .preview__bar { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-xs) var(--space-md); border-bottom: var(--rule-hair) solid var(--color-rule); font-size: var(--text-sm); }
 .preview__bar select { width: auto; min-height: 32px; }
 #frame { display: block; width: 100%; height: min(62dvh, 640px); border: 0; background: var(--color-paper); }
-#frame:focus-visible { outline: 2px solid var(--color-focus); outline-offset: -2px; }
+#frame:focus { outline: none; }
+.preview:focus-within { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .exports, .files { display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center; }
 
 @media (prefers-reduced-motion: reduce) { .key { transition: none; } }
