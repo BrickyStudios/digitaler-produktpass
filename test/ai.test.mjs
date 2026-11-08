@@ -17,9 +17,9 @@ const msg = (text, stop = 'end_turn') => ({
 });
 
 test('sends PDF + schema and parses the JSON answer', async () => {
-  const { fn, calls } = fakeFetch(200, msg(JSON.stringify({ chemistry: { value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' }, gtin: null })));
+  const { fn, calls } = fakeFetch(200, msg(JSON.stringify({ fields: [{ key: 'chemistry', value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' }, { key: 'category', value: 'kein-gueltiger-wert', source: 'x' }, { key: 'weightKg', value: ' ', source: 'x' }] })));
   const out = await extractFields({ apiKey: 'sk-test', template: 'battery', lang: 'de', files: [{ name: 'datenblatt.pdf', base64: 'JVBERi0=' }, { name: 'ce.pdf', base64: 'JVBERi0=' }], fetch: fn });
-  assert.deepEqual(out.chemistry, { value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' });
+  assert.deepEqual(out, { chemistry: { value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' } });
   const { url, headers, body } = calls[0];
   assert.match(url, /api\.anthropic\.com\/v1\/messages/);
   assert.equal(headers.get('authorization'), 'Bearer sk-test');

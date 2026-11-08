@@ -1,10 +1,11 @@
 // KI-Import: reads a datasheet (PDF or text) with Claude and returns field values.
 // Runs in the browser with the user's own API key; the key goes only to api.anthropic.com.
-import { aiSchema } from './ai-schema.mjs';
+import { aiSchema, fieldGuide } from './ai-schema.mjs';
+import { fieldsOf } from '../lib/templates.mjs';
 
 const PROMPT = {
-  de: 'Fülle aus den Dokumenten oben die Felder eines digitalen Produktpasses. Übernimm nur Angaben, die in einem Dokument stehen, mit Einheit, und nenne als Quelle Dateiname und Seite. Steht etwas nirgends, setze null. Nichts schätzen oder ergänzen. Werte auf Deutsch.',
-  en: 'From the documents above, fill in the fields of a digital product passport. Only use information stated in a document, with units, and give file name and page as the source. If something is not stated anywhere, use null. Do not estimate or add anything. Values in English.',
+  de: 'Fülle aus den Dokumenten oben die Felder eines digitalen Produktpasses. Übernimm nur Angaben, die in einem Dokument stehen, mit Einheit, und nenne als Quelle Dateiname und Seite. Lass Felder weg, die in keinem Dokument stehen. Nichts schätzen oder ergänzen. Werte auf Deutsch.',
+  en: 'From the documents above, fill in the fields of a digital product passport. Only use information stated in a document, with units, and give file name and page as the source. Leave out fields that no document states. Do not estimate or add anything. Values in English.',
 };
 
 // files: [{ name, base64 }] PDFs, read together in one request.
@@ -14,7 +15,7 @@ export async function extractFields({ apiKey, template, lang, files = [], text, 
   const content = [];
   for (const f of files) content.push({ type: 'document', title: f.name, source: { type: 'base64', media_type: 'application/pdf', data: f.base64 } });
   if (text) content.push({ type: 'text', text: `Datenblatt / datasheet:\n\n${text}` });
-  content.push({ type: 'text', text: PROMPT[lang] ?? PROMPT.de });
+  content.push({ type: 'text', text: `${PROMPT[lang] ?? PROMPT.de}\n\nFelder / fields (key: meaning):\ngtin: GTIN or EAN printed in a document\n${fieldGuide(template)}` });
 
   let res;
   try {
@@ -38,5 +39,12 @@ export async function extractFields({ apiKey, template, lang, files = [], text, 
   if (res.stop_reason === 'max_tokens') throw new Error('Antwort abgeschnitten. Kürzeres Dokument versuchen.');
   const block = res.content.find((b) => b.type === 'text');
   if (!block) throw new Error('Leere Antwort.');
-  return JSON.parse(block.text);
+  // { key: { value, source } } for the fields found; option fields keep only known values.
+  const options = Object.fromEntries(fieldsOf(template).filter((fd) => fd.options).map((fd) => [fd.key, fd.options.map((o) => o.value)]));
+  const out = {};
+  for (const { key, value, source } of JSON.parse(block.text).fields ?? []) {
+    if (!String(value).trim() || (options[key] && !options[key].includes(value))) continue;
+    out[key] = { value, source };
+  }
+  return out;
 }

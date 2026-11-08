@@ -71,14 +71,19 @@ test('QR code decodes to the passport URL', (t) => {
   }
 });
 
-test('AI schema covers every field and is strict', () => {
-  const s = aiSchema('battery');
-  assert.equal(s.additionalProperties, false);
-  assert.deepEqual(s.required, Object.keys(s.properties));
-  assert.ok(s.properties.chemistry && s.properties.ratedCapacityAh);
-  const obj = s.properties.chemistry.anyOf[0];
-  assert.deepEqual(obj.required, ['value', 'source']);
-  assert.equal(obj.additionalProperties, false);
+test('AI schema stays inside the structured-output limits', () => {
+  for (const template of ['battery', 'product']) {
+    const s = aiSchema(template);
+    const json = JSON.stringify(s);
+    // API limits: at most 16 union-typed and 24 optional parameters per request.
+    assert.ok(!json.includes('anyOf') && !/"type":\[/.test(json), `${template}: no unions`);
+    const objects = [s, s.properties.fields.items];
+    for (const o of objects) {
+      assert.equal(o.additionalProperties, false);
+      assert.deepEqual([...o.required].sort(), Object.keys(o.properties).sort());
+    }
+    assert.ok(s.properties.fields.items.properties.key.enum.includes('chemistry') || template === 'product');
+  }
 });
 
 test('sources show under the value and are validated', () => {
