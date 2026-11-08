@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Produktpass-Editor von Passwerk: Batteriepass im Browser erstellen</title>
+<meta name="description" content="Digitalen Produktpass oder EU-Batteriepass im Browser ausfüllen, Pflichtangaben prüfen und als JSON, HTML-Seite und QR-Code herunterladen. Daten bleiben im Browser.">
+<link rel="canonical" href="https://brickystudios.github.io/digitaler-produktpass/editor/">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/ibm-plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+<header class="bar">
+  <a class="wordmark" href="../" aria-label="Passwerk, zur Startseite">Passwerk</a>
+  <nav class="bar__links" aria-label="Hilfe">
+    <a href="../batteriepass/">Pflichtangaben</a>
+    <a href="https://github.com/BrickyStudios/digitaler-produktpass">Quellcode</a>
+  </nav>
+</header>
+
+<noscript><p class="noscript">Der Editor braucht JavaScript. Ohne JavaScript können Sie eine JSON-Datei nach dem Beispiel im Repository von Hand schreiben.</p></noscript>
+
+<main class="bench">
+  <form class="sheet" id="form" novalidate>
+    <div class="sheet__head">
+      <h1>Produktpass erstellen</h1>
+      <p>Ihre Eingaben bleiben in diesem Browser. Nichts wird an Passwerk geschickt.</p>
+    </div>
+
+    <details class="ai" id="ai">
+      <summary>Aus einem Datenblatt ausfüllen lassen</summary>
+      <div class="ai__body">
+        <p>Claude liest das Datenblatt und schlägt Werte vor. Was nicht im Dokument steht, bleibt leer. Jeder Vorschlag ist markiert, bis Sie ihn ändern oder bestätigen.</p>
+        <label for="ai-file">Datenblatt als PDF</label>
+        <input id="ai-file" name="ai-file" type="file" accept="application/pdf">
+        <label for="ai-text">oder Text des Datenblatts</label>
+        <textarea id="ai-text" name="ai-text" rows="4"></textarea>
+        <label for="ai-key">Ihr Anthropic-API-Schlüssel</label>
+        <input id="ai-key" name="ai-key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…">
+        <label class="check"><input id="ai-remember" type="checkbox"> Schlüssel bis zum Schließen des Tabs merken</label>
+        <button class="key" id="ai-run" type="button">Felder ausfüllen</button>
+        <p class="msg" id="ai-status" aria-live="polite"></p>
+        <p class="fine">Das Dokument und der Schlüssel gehen direkt von Ihrem Browser an api.anthropic.com. Die Kosten rechnet Anthropic mit Ihnen ab. Einen Schlüssel bekommen Sie unter console.anthropic.com.</p>
+      </div>
+    </details>
+
+    <fieldset class="group">
+      <legend>Grundlagen</legend>
+      <div class="field">
+        <span class="field__label" id="tpl-label">Vorlage</span>
+        <div class="seg" role="radiogroup" aria-labelledby="tpl-label">
+          <input type="radio" name="template" id="tpl-battery" value="battery" checked><label for="tpl-battery">Batteriepass</label>
+          <input type="radio" name="template" id="tpl-product" value="product"><label for="tpl-product">Anderes Produkt (ESPR)</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="language">Sprache der Passseite</label>
+        <select id="language" name="language"><option value="de">Deutsch</option><option value="en">Englisch</option></select>
+      </div>
+      <div class="field">
+        <label for="gtin">GTIN (EAN) <span class="ref">optional, für GS1 Digital Link</span></label>
+        <input id="gtin" name="gtin" inputmode="numeric" autocomplete="off" data-key="gtin">
+      </div>
+      <div class="field">
+        <label for="id">Kurzname der Datei <span class="ref">Kleinbuchstaben, Ziffern, Bindestriche</span></label>
+        <input id="id" name="id" autocomplete="off" spellcheck="false" data-key="id">
+      </div>
+      <div class="field">
+        <label for="base">Adresse, unter der die Pässe liegen werden</label>
+        <input id="base" name="base" type="url" autocomplete="url" spellcheck="false">
+      </div>
+    </fieldset>
+
+    <div id="fields"></div>
+
+    <fieldset class="group">
+      <legend>Seriennummern</legend>
+      <div class="field">
+        <label for="items">Eine pro Zeile: Seriennummer, Leerzeichen, Herstellungsmonat (JJJJ-MM)</label>
+        <textarea id="items" name="items" rows="4" spellcheck="false" placeholder="AK500-000123 2026-09"></textarea>
+      </div>
+    </fieldset>
+  </form>
+
+  <aside class="side" aria-label="Prüfung und Vorschau">
+    <div class="check-box">
+      <p class="status" id="status" role="status"></p>
+      <ul class="problems" id="problems"></ul>
+    </div>
+    <div class="preview">
+      <div class="preview__bar">
+        <label for="view">Vorschau</label>
+        <select id="view" name="view"></select>
+      </div>
+      <iframe id="frame" title="Vorschau der Passseite" sandbox="allow-same-origin"></iframe>
+    </div>
+    <div class="exports">
+      <button class="key key--primary" id="dl-json" type="button">JSON herunterladen</button>
+      <button class="key" id="dl-html" type="button">Passseite (HTML)</button>
+      <button class="key" id="dl-svg" type="button">QR-Code (SVG)</button>
+      <button class="key" id="dl-png" type="button">QR-Code (PNG)</button>
+    </div>
+    <div class="files">
+      <label class="key key--file" for="load">JSON öffnen</label>
+      <input id="load" type="file" accept="application/json,.json" class="visually-hidden">
+      <button class="link" id="example" type="button">Beispiel laden</button>
+      <button class="link" id="clear" type="button">Alles leeren</button>
+    </div>
+    <p class="fine">Die JSON-Datei gehört in den Ordner <code>passports/</code> Ihres Repositorys. Beim nächsten Push baut GitHub Actions daraus alle Passseiten.</p>
+  </aside>
+</main>
+<script type="module" src="editor.mjs"></script>
+</body>
+</html>

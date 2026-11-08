@@ -1,0 +1,4 @@
+_site/
+.hallmark/
+node_modules/
+.gstack/

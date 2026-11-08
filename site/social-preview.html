@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Passwerk Vorschaubild</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  body { margin: 0; background: var(--color-paper); }
+  .card { width: 1280px; height: 640px; display: grid; grid-template-columns: 600px 1fr; gap: var(--space-2xl); align-items: center; padding: 0 var(--space-2xl); box-sizing: border-box; overflow: hidden; }
+  .card h1 { font-size: 64px; max-width: 12ch; }
+  .card .lead { margin-top: var(--space-lg); color: var(--color-ink-2); }
+  .card .wordmark { display: block; margin-bottom: var(--space-xl); }
+  .card .shot { height: 560px; overflow: hidden; border-radius: var(--radius-card); border: var(--rule-hair) solid var(--color-rule-2); box-shadow: var(--shadow-card); }
+  .card .shot img { width: 100%; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div>
+    <span class="wordmark">Passwerk</span>
+    <h1>Digitaler Produktpass, Open Source</h1>
+    <p class="lead">EU-Batteriepass mit QR-Code aus einer JSON-Datei. Gehostet auf GitHub Pages.</p>
+  </div>
+  <div class="shot"><img src="assets/img/passseite.webp" width="1640" height="1960" alt=""></div>
+</div>
+</body>
+</html>

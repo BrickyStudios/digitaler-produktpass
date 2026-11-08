@@ -1,0 +1,18 @@
+{
+  "template": "product",
+  "id": "example-organic-tshirt",
+  "language": "en",
+  "gtin": "09520987654320",
+  "productName": "Example organic cotton T-shirt (made-up demo product)",
+  "manufacturer": "Sample Textiles Ltd (fictional)\n1 Example Road, Sampletown\ninfo@example.com",
+  "countryOfOrigin": "Portugal",
+  "commodityCode": "6109 10 00",
+  "materials": "100 % organic cotton, 180 g/m²\nSewing thread: 100 % recycled polyester",
+  "substancesOfConcern": "None above 0.1 % w/w (REACH SVHC list, 2026)",
+  "recycledContent": "Thread only (about 1 % of product weight)",
+  "careInstructions": "Wash at 30 °C, do not tumble dry.",
+  "repairInfo": "Free repair of seams within 2 years. Patches available on request.",
+  "endOfLife": "Return to any store for textile recycling.",
+  "userManualUrl": "https://example.com/care-guide",
+  "declarationOfConformityUrl": "https://example.com/declaration.pdf"
+}

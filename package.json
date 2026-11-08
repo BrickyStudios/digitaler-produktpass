@@ -1,0 +1,14 @@
+{
+  "name": "digitaler-produktpass",
+  "version": "0.1.0",
+  "description": "Passwerk: open-source digital product passport (DPP) and EU battery passport generator. JSON in, passport pages with QR codes out, free hosting on GitHub Pages.",
+  "type": "module",
+  "private": true,
+  "license": "PolyForm-Shield-1.0.0",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "preview": "python3 -m http.server 8080 -d _site"
+  },
+  "engines": { "node": ">=20" }
+}
