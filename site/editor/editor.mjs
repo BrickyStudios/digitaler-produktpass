@@ -97,7 +97,7 @@ function update() {
     ? `${errors.length} ${errors.length === 1 ? 'Angabe fehlt oder ist fehlerhaft' : 'Angaben fehlen oder sind fehlerhaft'}`
     : `Pflichtangaben vollständig${warnings.length ? `, ${warnings.length} freiwillige Felder leer` : ''}`;
   const shown = errors.slice(0, 6);
-  $('problems').replaceChildren(...shown.map((e) => el('li', {}, e)), errors.length > shown.length ? el('li', {}, `und ${errors.length - shown.length} weitere`) : null);
+  $('problems').replaceChildren(...shown.map((e) => el('li', {}, e)), ...(errors.length > shown.length ? [el('li', {}, `und ${errors.length - shown.length} weitere`)] : []));
   const missing = fieldsOf(p.template).filter((fd) => isEmpty(p[fd.key])).sort((a, b) => (b.required ? 1 : 0) - (a.required ? 1 : 0));
   $('ask').hidden = !missing.length;
   $('ask').href = `mailto:?subject=${encodeURIComponent(`Angaben für den digitalen Produktpass: ${p.productName || 'unser Produkt'}`)}&body=${encodeURIComponent(supplierMail(missing))}`;

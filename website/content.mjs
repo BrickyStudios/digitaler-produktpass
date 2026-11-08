@@ -72,7 +72,7 @@ export const HOME = {
       h2: 'Vom Datenblatt zur Passseite',
       items: [
         { h3: 'Datenblatt einlesen', p: 'PDF hochladen. Claude trägt ein, was drinsteht, und markiert jeden Vorschlag.', img: 'editor-ki.webp', w: 1368, h: 1500, alt: 'Editor mit geöffnetem KI-Import: eingefügter Datenblatt-Text, API-Schlüssel, Meldung über neun vorgeschlagene Felder' },
-        { h3: 'Pflichtangaben prüfen', p: 'Fehlt eine Angabe aus Anhang XIII, nennt die Liste sie mit Fundstelle.', img: 'editor-pruefung.webp', w: 1368, h: 1858, alt: 'Prüfliste mit drei fehlenden Angaben über der Vorschau der Passseite' },
+        { h3: 'Pflichtangaben prüfen', p: 'Fehlt eine Angabe aus Anhang XIII, nennt die Liste sie mit Fundstelle.', img: 'editor-pruefung.webp', w: 1368, h: 1954, alt: 'Prüfliste mit drei fehlenden Angaben über der Vorschau der Passseite' },
         { h3: 'Veröffentlichen', p: 'JSON-Datei committen. Jede Seriennummer bekommt eine Seite mit eigenem QR-Code.', img: 'passseite-handy.webp', w: 780, h: 1688, alt: 'Passseite einer einzelnen Seriennummer auf dem Handy' },
       ],
     },
@@ -134,7 +134,7 @@ export const HOME = {
       h2: 'From datasheet to passport page',
       items: [
         { h3: 'Read the datasheet', p: 'Upload the PDF. Claude fills in what it states and marks every suggestion.', img: 'editor-ki.webp', w: 1368, h: 1500, alt: 'Editor with the AI import open: pasted datasheet text, API key, a note that nine fields were suggested' },
-        { h3: 'Check the required fields', p: 'Anything missing from Annex XIII shows up in a list, with its reference.', img: 'editor-pruefung.webp', w: 1368, h: 1858, alt: 'Check list with three missing fields above the passport preview' },
+        { h3: 'Check the required fields', p: 'Anything missing from Annex XIII shows up in a list, with its reference.', img: 'editor-pruefung.webp', w: 1368, h: 1954, alt: 'Check list with three missing fields above the passport preview' },
         { h3: 'Publish', p: 'Commit the JSON file. Each serial number gets a page with its own QR code.', img: 'passseite-handy.webp', w: 780, h: 1688, alt: 'Passport page of a single serial number on a phone' },
       ],
     },

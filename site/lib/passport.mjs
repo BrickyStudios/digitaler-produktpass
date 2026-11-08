@@ -121,8 +121,9 @@ export function jsonLd(p, url, item) {
 }
 
 const CSS = `
-:root{--ink:#14211c;--muted:#5b6a63;--line:#d9e0dc;--paper:#fbfcfb;--accent:#0b6e4f}
-@media (prefers-color-scheme:dark){:root{--ink:#e7eeea;--muted:#9fb0a8;--line:#2c3934;--paper:#101614;--accent:#5fd3a5}}
+/* Passwerk palette (cobalt, hue 258): kept well away from teal/green brand colours */
+:root{--ink:oklch(21% .028 262);--muted:oklch(48% .018 258);--line:oklch(90% .009 252);--paper:oklch(98.6% .005 250);--accent:oklch(52% .19 258)}
+@media (prefers-color-scheme:dark){:root{--ink:oklch(93% .01 250);--muted:oklch(72% .022 256);--line:oklch(33% .024 262);--paper:oklch(21% .024 262);--accent:oklch(76% .13 254)}}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:46rem;margin:0 auto;padding:2rem 1rem 3rem}
 .kind{color:var(--accent);font-weight:600;margin:0 0 1rem}
