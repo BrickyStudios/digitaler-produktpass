@@ -3,15 +3,16 @@
 import { aiSchema } from './ai-schema.mjs';
 
 const PROMPT = {
-  de: 'Fülle aus dem Datenblatt oben die Felder eines digitalen Produktpasses. Übernimm nur Angaben, die im Dokument stehen, mit Einheit. Steht etwas nicht drin, setze null. Nichts schätzen oder ergänzen. Antworte auf Deutsch.',
-  en: 'From the datasheet above, fill in the fields of a digital product passport. Only use information stated in the document, with units. If something is not stated, use null. Do not estimate or add anything. Answer in English.',
+  de: 'Fülle aus den Dokumenten oben die Felder eines digitalen Produktpasses. Übernimm nur Angaben, die in einem Dokument stehen, mit Einheit, und nenne als Quelle Dateiname und Seite. Steht etwas nirgends, setze null. Nichts schätzen oder ergänzen. Werte auf Deutsch.',
+  en: 'From the documents above, fill in the fields of a digital product passport. Only use information stated in a document, with units, and give file name and page as the source. If something is not stated anywhere, use null. Do not estimate or add anything. Values in English.',
 };
 
-export async function extractFields({ apiKey, template, lang, pdfBase64, text, fetch }) {
+// files: [{ name, base64 }] PDFs, read together in one request.
+export async function extractFields({ apiKey, template, lang, files = [], text, fetch }) {
   const { default: Anthropic } = await import('./vendor/anthropic.mjs');
   const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true, maxRetries: 1, ...(fetch && { fetch }) });
   const content = [];
-  if (pdfBase64) content.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfBase64 } });
+  for (const f of files) content.push({ type: 'document', title: f.name, source: { type: 'base64', media_type: 'application/pdf', data: f.base64 } });
   if (text) content.push({ type: 'text', text: `Datenblatt / datasheet:\n\n${text}` });
   content.push({ type: 'text', text: PROMPT[lang] ?? PROMPT.de });
 

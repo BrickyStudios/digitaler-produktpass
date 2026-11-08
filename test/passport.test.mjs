@@ -76,4 +76,20 @@ test('AI schema covers every field and is strict', () => {
   assert.equal(s.additionalProperties, false);
   assert.deepEqual(s.required, Object.keys(s.properties));
   assert.ok(s.properties.chemistry && s.properties.ratedCapacityAh);
+  const obj = s.properties.chemistry.anyOf[0];
+  assert.deepEqual(obj.required, ['value', 'source']);
+  assert.equal(obj.additionalProperties, false);
+});
+
+test('sources show under the value and are validated', () => {
+  const html = renderPassport({ ...battery, sources: { chemistry: 'datenblatt.pdf, S. 2' } }, { url: 'https://e.com/x/' });
+  assert.match(html, /Quelle: datenblatt\.pdf, S\. 2/);
+  assert.match(validate({ ...battery, sources: { chemistry: 3 } }).errors.join(), /sources/);
+});
+
+test('label sheet has one decodable QR per serial', async () => {
+  const { renderLabels } = await import('../site/lib/passport.mjs');
+  const html = renderLabels(battery, battery.items.map((i) => ({ serial: i.serial, url: `https://e.com/${i.serial}/` })));
+  assert.equal((html.match(/<figure>/g) || []).length, 2);
+  assert.match(html, /noindex/);
 });

@@ -17,9 +17,9 @@ const msg = (text, stop = 'end_turn') => ({
 });
 
 test('sends PDF + schema and parses the JSON answer', async () => {
-  const { fn, calls } = fakeFetch(200, msg(JSON.stringify({ chemistry: 'Li-Ion NMC', gtin: null })));
-  const out = await extractFields({ apiKey: 'sk-test', template: 'battery', lang: 'de', pdfBase64: 'JVBERi0=', fetch: fn });
-  assert.equal(out.chemistry, 'Li-Ion NMC');
+  const { fn, calls } = fakeFetch(200, msg(JSON.stringify({ chemistry: { value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' }, gtin: null })));
+  const out = await extractFields({ apiKey: 'sk-test', template: 'battery', lang: 'de', files: [{ name: 'datenblatt.pdf', base64: 'JVBERi0=' }, { name: 'ce.pdf', base64: 'JVBERi0=' }], fetch: fn });
+  assert.deepEqual(out.chemistry, { value: 'Li-Ion NMC', source: 'datenblatt.pdf, S. 1' });
   const { url, headers, body } = calls[0];
   assert.match(url, /api\.anthropic\.com\/v1\/messages/);
   assert.equal(headers.get('authorization'), 'Bearer sk-test');
@@ -29,6 +29,8 @@ test('sends PDF + schema and parses the JSON answer', async () => {
   assert.equal(body.fallbacks, 'default');
   assert.equal(body.output_config.format.type, 'json_schema');
   assert.equal(body.messages[0].content[0].type, 'document');
+  assert.equal(body.messages[0].content[0].title, 'datenblatt.pdf');
+  assert.equal(body.messages[0].content[1].title, 'ce.pdf');
 });
 
 test('bad key gives a readable error', async () => {

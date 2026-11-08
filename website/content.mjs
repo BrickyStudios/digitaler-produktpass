@@ -13,7 +13,7 @@ export const ESPR_PAGE = 'https://commission.europa.eu/energy-climate-change-env
 export const DEMO = { model: '01/09520123456788/', item: '01/09520123456788/21/AK500-000123/', item2: '01/09520123456788/21/AK500-000124/', shirt: '01/09520987654320/' };
 
 const nav = {
-  de: { links: [['batteriepass/', 'Batteriepass'], ['digitaler-produktpass-ab-wann/', 'Fristen'], ['digitaler-produktpass-beispiel/', 'Beispiel'], ['en/', 'English']], action: 'Editor öffnen', home: 'Passwerk, zur Startseite' },
+  de: { links: [['batteriepass/', 'Batteriepass'], ['batteriepass-pflicht-check/', 'Pflicht-Check'], ['digitaler-produktpass-ab-wann/', 'Fristen'], ['en/', 'English']], action: 'Editor öffnen', home: 'Passwerk, zur Startseite' },
   en: { links: [['en/battery-passport/', 'Battery passport'], ['en/dpp-software/', 'DPP software'], ['', 'Deutsch']], action: 'Open the editor', home: 'Passwerk, home' },
 };
 
@@ -21,7 +21,7 @@ const footer = {
   de: {
     line: 'Digitale Produktpässe zum Selbsthosten.',
     cols: [
-      ['Ratgeber', [['batteriepass/', 'Batteriepass erstellen'], ['digitaler-produktpass-ab-wann/', 'Ab wann Pflicht'], ['digitaler-produktpass-beispiel/', 'Beispiel ansehen'], ['dpp-software/', 'DPP-Software']]],
+      ['Ratgeber', [['batteriepass/', 'Batteriepass erstellen'], ['batteriepass-pflicht-check/', 'Pflicht-Check'], ['digitaler-produktpass-ab-wann/', 'Ab wann Pflicht'], ['digitaler-produktpass-beispiel/', 'Beispiel ansehen'], ['dpp-software/', 'DPP-Software']]],
       ['English', [['en/', 'Digital product passport'], ['en/battery-passport/', 'Battery passport'], ['en/dpp-software/', 'DPP software']]],
       ['Projekt', [['editor/', 'Editor'], [REPO, 'Quellcode'], [`${REPO}/issues`, 'Fehler melden'], [`${REPO}/blob/main/LICENSE`, 'Lizenz']]],
     ],
@@ -94,7 +94,7 @@ export const HOME = {
         ['18.02.2027', 'QR-Code auf jeder Batterie', 'Art. 13 Abs. 6'],
         ['18.02.2027', 'Batteriepass für LMT-, Industrie- (über 2 kWh) und Elektrofahrzeugbatterien', 'Art. 77 Abs. 1'],
       ],
-      more: ['digitaler-produktpass-ab-wann/', 'Fristen für alle Produkte'],
+      more: ['batteriepass-pflicht-check/', 'Zum Pflicht-Check'],
     },
     faq: {
       h2: 'Fragen vor dem ersten Pass',
@@ -238,6 +238,31 @@ export const GUIDES = [
     ],
   },
 
+  {
+    path: 'batteriepass-pflicht-check/', lang: 'de', alt: null,
+    title: 'Batteriepass Pflicht? Der Check in vier Fragen',
+    description: 'Betrifft Sie der EU-Batteriepass? Vier Fragen zu Batterieart, Kapazität, Rolle und Datum. Das Ergebnis nennt Pflichten und Fundstellen aus der Batterieverordnung.',
+    h1: 'Brauchen Sie einen Batteriepass?',
+    lede: 'Vier Fragen zu Ihrer Batterie. Das Ergebnis zeigt, welche Kennzeichnungspflichten der Verordnung (EU) 2023/1542 gelten, jeweils mit Fundstelle.',
+    body: `{{CHECK}}
+
+<h2>So entscheidet der Check</h2>
+<p>Ob ein Pass nötig ist, hängt an der Batteriekategorie. Die Definitionen stehen in Art. 3 der Verordnung:</p>
+<ul>
+<li><strong>LMT-Batterie:</strong> geschlossen, höchstens 25 kg, für den Antrieb von Fahrzeugen mit Elektromotor oder Motor und Muskelkraft, also E-Bikes, Pedelecs, E-Scooter und Fahrzeuge der Klasse L. Pass ja.</li>
+<li><strong>Elektrofahrzeugbatterie:</strong> Antrieb von Hybrid- oder Elektrofahrzeugen der Klassen M, N und O oder Klasse-L-Batterien über 25 kg. Pass ja.</li>
+<li><strong>Industriebatterie:</strong> für industrielle Nutzung gebaut, etwa stationäre Speicher, oder jede andere Batterie über 5 kg, die in keine andere Kategorie fällt. Pass nur über 2 kWh.</li>
+<li><strong>Gerätebatterie:</strong> geschlossen, höchstens 5 kg, nicht industriell. Kein Pass, aber QR-Code.</li>
+<li><strong>SLI-Batterie:</strong> Starter-, Licht- und Zündbatterie für Fahrzeuge. Kein Pass, aber QR-Code.</li>
+</ul>
+<p>Pflichtig ist, wer die Batterie in der EU in Verkehr bringt: der Hersteller oder, bei Ware von außerhalb der EU, der Importeur (Art. 77 Abs. 4). Händler erstellen keinen Pass, prüfen aber vor dem Verkauf die Kennzeichnung (Art. 42 Abs. 2). Maßgeblich ist das Datum, an dem die einzelne Batterie in Verkehr kommt, nicht das Modell.</p>
+<p>Die Liste der Pflichtangaben steht auf der Seite <a href="../batteriepass/">Batteriepass erstellen</a>, alle Termine unter <a href="../digitaler-produktpass-ab-wann/">Fristen</a>.</p>`,
+    sources: [[EURLEX_BATT, 'Verordnung (EU) 2023/1542, Art. 3, 13, 42 und 77, auf EUR-Lex']],
+    faq: [
+      ['Braucht eine Gerätebatterie einen Batteriepass?', 'Nein. Gerätebatterien bis 5 kg brauchen keinen Batteriepass, tragen aber ab dem 18. Februar 2027 einen QR-Code, der zu ihren Pflichtinformationen führt (Art. 13 Abs. 6).'],
+      ['Wer muss den Batteriepass erstellen?', 'Der Wirtschaftsakteur, der die Batterie in der EU in Verkehr bringt, also Hersteller oder Importeur (Art. 77 Abs. 4). Er darf einen Dienstleister schriftlich beauftragen.'],
+    ],
+  },
   {
     path: 'digitaler-produktpass-ab-wann/', lang: 'de', alt: null,
     title: 'Digitaler Produktpass: Ab wann ist er Pflicht?',

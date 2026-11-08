@@ -1,4 +1,4 @@
-import { TEMPLATES, refText } from '../lib/templates.mjs';
+import { TEMPLATES, fieldsOf, refText } from '../lib/templates.mjs';
 import { isEmpty, passportPath, renderPassport, validate } from '../lib/passport.mjs';
 import { qrSvg } from '../lib/qr.mjs';
 
@@ -49,7 +49,8 @@ function renderFields() {
       input.value = p[fd.key] ?? '';
       input.dataset.key = fd.key;
       const wrap = el('div', { class: `field${aiKeys.has(fd.key) ? ' is-ai' : ''}` }, label, input);
-      if (aiKeys.has(fd.key)) wrap.append(el('p', { class: 'ai-note' }, 'Vorschlag aus dem Datenblatt, bitte prüfen'));
+      if (aiKeys.has(fd.key)) wrap.append(el('p', { class: 'ai-note' }, `Vorschlag aus ${p.sources?.[fd.key] || 'den Dokumenten'}, bitte prüfen`));
+      else if (p.sources?.[fd.key]) wrap.append(el('p', { class: 'src-note' }, `Quelle: ${p.sources[fd.key]}`));
       fs.append(wrap);
     }
     box.append(fs);
@@ -60,11 +61,25 @@ function renderFields() {
   $('items').value = (p.items ?? []).map((i) => [i.serial, i.manufactureDate].filter(Boolean).join(' ')).join('\n');
 }
 
+// Accepts "SERIAL 2026-09", Excel columns (tab), semicolons and German dates (09.2026, 15.09.2026).
+const monthOf = (d) => {
+  if (!d) return undefined;
+  const de = d.match(/^(?:\d{1,2}\.)?(\d{1,2})\.(\d{4})$/);
+  if (de) return `${de[2]}-${de[1].padStart(2, '0')}`;
+  const iso = d.match(/^(\d{4})-(\d{2})(?:-\d{2})?$/);
+  return iso ? `${iso[1]}-${iso[2]}` : d;
+};
 function parseItems(text) {
   return text.split('\n').map((l) => l.trim()).filter(Boolean).map((l) => {
-    const [serial, manufactureDate] = l.split(/\s+/);
+    const [serial, date] = l.split(/[\t;,]\s*|\s+/).filter(Boolean);
+    const manufactureDate = monthOf(date);
     return manufactureDate ? { serial, manufactureDate } : { serial };
   });
+}
+
+function supplierMail(missing) {
+  const lines = missing.map((fd) => `- ${fd.label.de}${fd.required ? ' (Pflicht)' : ''}, ${refText(fd.ref, 'de')}`);
+  return `Guten Tag,\n\nfür den digitalen Produktpass zu „${p.productName || 'unserem Produkt'}“ fehlen uns noch diese Angaben:\n\n${lines.join('\n')}\n\nKönnen Sie uns die Werte oder die passenden Unterlagen (Datenblatt, Konformitätserklärung, Prüfberichte) schicken?\n\nVielen Dank und freundliche Grüße`;
 }
 
 function clean() {
@@ -83,6 +98,9 @@ function update() {
     : `Pflichtangaben vollständig${warnings.length ? `, ${warnings.length} freiwillige Felder leer` : ''}`;
   const shown = errors.slice(0, 6);
   $('problems').replaceChildren(...shown.map((e) => el('li', {}, e)), errors.length > shown.length ? el('li', {}, `und ${errors.length - shown.length} weitere`) : null);
+  const missing = fieldsOf(p.template).filter((fd) => isEmpty(p[fd.key])).sort((a, b) => (b.required ? 1 : 0) - (a.required ? 1 : 0));
+  $('ask').hidden = !missing.length;
+  $('ask').href = `mailto:?subject=${encodeURIComponent(`Angaben für den digitalen Produktpass: ${p.productName || 'unser Produkt'}`)}&body=${encodeURIComponent(supplierMail(missing))}`;
 
   const view = $('view');
   const keep = view.value;
@@ -106,6 +124,7 @@ $('form').addEventListener('input', (e) => {
   else if (t.id === 'base') store.set('passwerk.base', t.value.trim());
   else if (t.dataset.key) {
     p[t.dataset.key] = t.value;
+    if (p.sources?.[t.dataset.key]) { delete p.sources[t.dataset.key]; t.closest('.field')?.querySelector('.src-note')?.remove(); }
     if (t.dataset.key === 'id') idTouched = true;
     if (aiKeys.delete(t.dataset.key)) { t.closest('.field').classList.remove('is-ai'); t.closest('.field').querySelector('.ai-note')?.remove(); }
     if (t.dataset.key === 'productName' && !idTouched) { p.id = slug(t.value); $('id').value = p.id; }
@@ -158,35 +177,36 @@ $('ai-run').addEventListener('click', async () => {
   const btn = $('ai-run');
   const msg = $('ai-status');
   const apiKey = $('ai-key').value.trim();
-  const file = $('ai-file').files[0];
+  const files = [...$('ai-file').files];
   const text = $('ai-text').value.trim();
   store.set('passwerk.key', $('ai-remember').checked ? apiKey : null, sessionStorage);
   if (!apiKey) { msg.textContent = 'Bitte zuerst einen API-Schlüssel eintragen.'; $('ai-key').focus(); return; }
-  if (!file && !text) { msg.textContent = 'Bitte ein PDF wählen oder Text einfügen.'; $('ai-file').focus(); return; }
-  if (file && file.size > 24 * 1024 * 1024) { msg.textContent = 'Das PDF ist größer als 24 MB. Bitte eine kleinere Datei nehmen.'; return; }
+  if (!files.length && !text) { msg.textContent = 'Bitte ein PDF wählen oder Text einfügen.'; $('ai-file').focus(); return; }
+  // 32 MB request limit; base64 adds a third.
+  if (files.reduce((n, f) => n + f.size, 0) > 22 * 1024 * 1024) { msg.textContent = 'Die PDFs sind zusammen größer als 22 MB. Bitte weniger oder kleinere Dateien wählen.'; return; }
   btn.disabled = true;
   btn.setAttribute('aria-busy', 'true');
-  msg.textContent = 'Claude liest das Datenblatt…';
+  msg.textContent = files.length > 1 ? `Claude liest ${files.length} Dokumente…` : 'Claude liest das Dokument…';
   try {
-    const pdfBase64 = file ? await new Promise((ok, bad) => {
+    const docs = await Promise.all(files.map((file) => new Promise((ok, bad) => {
       const r = new FileReader();
-      r.onload = () => ok(String(r.result).split(',')[1]);
-      r.onerror = () => bad(new Error('PDF konnte nicht gelesen werden.'));
+      r.onload = () => ok({ name: file.name, base64: String(r.result).split(',')[1] });
+      r.onerror = () => bad(new Error(`${file.name} konnte nicht gelesen werden.`));
       r.readAsDataURL(file);
-    }) : null;
+    })));
     const { extractFields } = await import('./ai.mjs');
-    const out = await extractFields({ apiKey, template: p.template, lang: p.language ?? 'de', pdfBase64, text });
+    const out = await extractFields({ apiKey, template: p.template, lang: p.language ?? 'de', files: docs, text });
     let n = 0;
     for (const [k, v] of Object.entries(out)) {
-      if (isEmpty(v)) continue;
-      p[k] = v;
-      if (k !== 'gtin') aiKeys.add(k);
+      if (!v || isEmpty(v.value)) continue;
+      p[k] = v.value;
+      if (k !== 'gtin') { aiKeys.add(k); if (!isEmpty(v.source)) p.sources = { ...p.sources, [k]: v.source }; }
       n++;
     }
     if (!idTouched && p.productName) p.id = slug(p.productName);
     renderFields();
     update();
-    msg.textContent = n ? `${n} Felder vorgeschlagen. Die markierten Felder bitte mit dem Datenblatt abgleichen.` : 'Im Dokument standen keine passenden Angaben.';
+    msg.textContent = n ? `${n} Felder vorgeschlagen. Die markierten Felder bitte mit den Dokumenten abgleichen.` : 'Im Dokument standen keine passenden Angaben.';
   } catch (e) {
     msg.textContent = e.message || 'Unbekannter Fehler.';
   } finally {

@@ -32,9 +32,9 @@
     <details class="ai" id="ai">
       <summary>Aus einem Datenblatt ausfüllen lassen</summary>
       <div class="ai__body">
-        <p>Claude liest das Datenblatt und schlägt Werte vor. Was nicht im Dokument steht, bleibt leer. Jeder Vorschlag ist markiert, bis Sie ihn ändern oder bestätigen.</p>
-        <label for="ai-file">Datenblatt als PDF</label>
-        <input id="ai-file" name="ai-file" type="file" accept="application/pdf">
+        <p>Claude liest die Dokumente und schlägt Werte vor, jeweils mit Datei und Seite als Quelle. Was in keinem Dokument steht, bleibt leer. Jeder Vorschlag ist markiert, bis Sie ihn ändern.</p>
+        <label for="ai-file">Datenblatt, Zertifikate, Herstellererklärung (PDF, mehrere auf einmal)</label>
+        <input id="ai-file" name="ai-file" type="file" accept="application/pdf" multiple>
         <label for="ai-text">oder Text des Datenblatts</label>
         <textarea id="ai-text" name="ai-text" rows="4"></textarea>
         <label for="ai-key">Ihr Anthropic-API-Schlüssel</label>
@@ -78,7 +78,7 @@
     <fieldset class="group">
       <legend>Seriennummern</legend>
       <div class="field">
-        <label for="items">Eine pro Zeile: Seriennummer, Leerzeichen, Herstellungsmonat (JJJJ-MM)</label>
+        <label for="items">Eine pro Zeile: Seriennummer und Herstellungsmonat (JJJJ-MM oder MM.JJJJ). Zwei Spalten aus Excel lassen sich direkt einfügen.</label>
         <textarea id="items" name="items" rows="4" spellcheck="false" placeholder="AK500-000123 2026-09"></textarea>
       </div>
     </fieldset>
@@ -88,6 +88,7 @@
     <div class="check-box">
       <p class="status" id="status" role="status"></p>
       <ul class="problems" id="problems"></ul>
+      <a class="link" id="ask" href="#" hidden>Fehlende Angaben beim Lieferanten anfragen</a>
     </div>
     <div class="preview">
       <div class="preview__bar">

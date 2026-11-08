@@ -39,7 +39,13 @@ Passwerk erzeugt den öffentlichen Teil dieses Passes als statische Webseiten. S
 | **Prüfung** | Fehlende Pflichtangaben, kaputte Links, falsche GTIN-Prüfziffern und doppelte Seriennummern brechen den Build ab |
 | **Maschinenlesbar** | `passport.json` neben jeder Seite, dazu schema.org-`Product` als JSON-LD im Quelltext |
 | **Editor** | Formular im Browser mit Live-Vorschau, Download als JSON, HTML-Seite, QR-Code als SVG und PNG. Daten bleiben im Browser |
-| **KI-Import** | Claude liest ein Datenblatt (PDF oder Text) und füllt die Felder vor. Läuft mit Ihrem eigenen Anthropic-API-Schlüssel direkt aus dem Browser, jeder Vorschlag bleibt markiert, bis Sie ihn prüfen |
+| **KI-Import** | Claude liest mehrere Dokumente auf einmal (Datenblatt, Zertifikate, Herstellererklärung) und füllt die Felder vor, jeweils mit Datei und Seite als Quelle. Läuft mit Ihrem eigenen Anthropic-API-Schlüssel direkt aus dem Browser, jeder Vorschlag bleibt markiert, bis Sie ihn prüfen |
+| **Quellen** | Die Quelle jedes Werts steht in der Passdatei (`sources`) und klein unter dem Wert auf der Passseite |
+| **Lieferanten-Anfrage** | Ein Klick erzeugt eine E-Mail mit allen fehlenden Angaben und ihren Fundstellen |
+| **Etiketten** | Druckbogen mit allen QR-Codes eines Modells unter `/01/<GTIN>/etiketten/` |
+| **Versionierung** | Jede Passseite zeigt das Datum der letzten Änderung und verlinkt den Git-Verlauf der Passdatei |
+| **Pflicht-Check** | [Vier Fragen](https://brickystudios.github.io/digitaler-produktpass/batteriepass-pflicht-check/) klären, ob Ihre Batterie einen Pass braucht |
+| **Index** | `/passports.json` listet alle Pässe und Seriennummern mit ihren Adressen |
 | **Vorlagen** | Batteriepass nach Verordnung (EU) 2023/1542 und ein ESPR-Grundgerüst für andere Produkte |
 
 ### Was Passwerk nicht macht
@@ -53,7 +59,7 @@ Passwerk erzeugt den öffentlichen Teil dieses Passes als statische Webseiten. S
 ```sh
 git clone https://github.com/BrickyStudios/digitaler-produktpass
 cd digitaler-produktpass
-npm test           # 11 Tests, ohne Netz
+npm test           # Tests ohne Netz
 npm run build      # Pässe aus passports/ nach _site/
 npm run preview    # http://localhost:8080
 ```
@@ -82,6 +88,7 @@ Die Adresse Ihrer Seiten setzt der Workflow selbst (`https://<konto>.github.io/<
   "category": "lmt",
   "chemistry": "Lithium-Ionen, NMC 811 / Graphit",
   "ratedCapacityAh": 13.9,
+  "sources": { "chemistry": "datenblatt.pdf, S. 2" },
   "items": [
     { "serial": "AK500-000123", "manufactureDate": "2026-09" }
   ]
@@ -97,6 +104,8 @@ Alle Felder mit Fundstelle stehen in [`site/lib/templates.mjs`](site/lib/templat
 | Modell mit GTIN | `/01/09520123456788/` |
 | Einzelne Batterie | `/01/09520123456788/21/AK500-000123/` |
 | Ohne GTIN | `/p/<id>/` und `/p/<id>/<Seriennummer>/` |
+| Etikettenbogen | `/01/09520123456788/etiketten/` |
+| Alle Pässe | `/passports.json` |
 
 Art. 77 Abs. 3 verlangt eine eindeutige Kennung nach ISO/IEC 15459. GS1 ist eine Vergabestelle nach dieser Normreihe; eine GTIN bekommen Sie mit einer Mitgliedschaft bei GS1 Germany. Den QR-Code jeder Seite finden Sie als `qr.svg` daneben (Fehlerkorrektur M, Ruhezone vier Module).
 

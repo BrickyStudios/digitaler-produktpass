@@ -68,6 +68,16 @@ ${f.cols.map(([h, links]) => `<div><h2 class="foot__head">${h}</h2><ul>${links.m
 </div></footer>`;
 }
 
+const radio = (name, opts) => opts.map(([v, t]) => `<label class="opt"><input type="radio" name="${name}" value="${v}"><span>${t}</span></label>`).join('');
+const CHECK_FORM = (prefix) => `<form class="check cut" id="check" data-editor="${prefix}editor/">
+<fieldset><legend>Wofür ist die Batterie?</legend>${radio('kind', [['lmt', 'Antrieb von E-Bike, E-Scooter oder einem anderen Leichtfahrzeug, bis 25 kg'], ['ev', 'Antrieb von Auto, Transporter oder einem Fahrzeug über 25 kg Batterie'], ['industrial', 'Industrielle Nutzung oder stationärer Speicher, oder schwerer als 5 kg'], ['portable', 'Gerätebatterie bis 5 kg, etwa für Werkzeug, Laptop oder Haushalt'], ['sli', 'Starterbatterie für Fahrzeuge']])}</fieldset>
+<fieldset id="q-cap"><legend>Kapazität über 2 kWh?</legend>${radio('cap', [['over', 'Ja, mehr als 2 kWh'], ['under', 'Nein, 2 kWh oder weniger']])}</fieldset>
+<fieldset><legend>Ihre Rolle</legend>${radio('role', [['maker', 'Wir stellen die Batterie her oder lassen sie unter unserem Namen herstellen'], ['importer', 'Wir führen sie von außerhalb in die EU ein'], ['dealer', 'Wir verkaufen sie weiter']])}</fieldset>
+<fieldset><legend>Wann kommt die Batterie in Verkehr?</legend>${radio('when', [['before', 'Vor dem 18. Februar 2027'], ['after', 'Ab dem 18. Februar 2027']])}</fieldset>
+<div class="check__result" id="check-result" aria-live="polite"><noscript><p>Der Check braucht JavaScript. Die Regeln stehen unten auf dieser Seite.</p></noscript></div>
+</form>
+<script type="module" src="${prefix}assets/check.mjs"></script>`;
+
 const faqLd = (items) => items.length && { '@type': 'FAQPage', mainEntity: items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
 
 function home(BASE, c) {
@@ -184,7 +194,8 @@ function guide(BASE, g) {
   const de = g.lang === 'de';
   const body = g.body
     .replace('{{QR_ITEM}}', qrSvg(`${BASE}/${DEMO.item}`).replace('aria-label="QR-Code"', `aria-label="QR-Code: ${BASE}/${DEMO.item}"`))
-    .replace('{{DEMO_JSON}}', esc(HOME.de.json));
+    .replace('{{DEMO_JSON}}', esc(HOME.de.json))
+    .replace('{{CHECK}}', CHECK_FORM(prefix));
   return `${head({ BASE, page: g, prefix, schema })}
 <body class="doc">
 ${nav(g.lang, prefix)}
@@ -193,6 +204,7 @@ ${nav(g.lang, prefix)}
   <h1>${g.h1}</h1>
   <p class="lead">${g.lede}</p>
   <p class="doc__meta">${de ? 'Stand' : 'Updated'} <time datetime="${UPDATED}">${de ? '8. November 2026' : '8 November 2026'}</time></p>
+  <p class="doc__action"><a class="text-link" href="${prefix}editor/">${de ? 'Pass im Editor anlegen' : 'Create a passport in the editor'}</a></p>
   <div class="prose">${body}</div>
   ${g.faq.length ? `<h2 class="doc__h2">${de ? 'Kurz beantwortet' : 'Short answers'}</h2><dl class="qa">${g.faq.map(([q, a]) => `<dt>${q}</dt><dd>${a}</dd>`).join('')}</dl>` : ''}
   <h2 class="doc__h2">${de ? 'Quellen' : 'Sources'}</h2>
@@ -233,7 +245,9 @@ export function buildWebsite({ BASE, OUT }) {
 - [Batteriepass erstellen](${BASE}/batteriepass/): Annex XIII fields, access levels, QR code rules
 - [EU battery passport](${BASE}/en/battery-passport/): the same in English
 - [Ab wann Pflicht](${BASE}/digitaler-produktpass-ab-wann/): deadlines for batteries and ESPR product groups
+- [Pflicht-Check](${BASE}/batteriepass-pflicht-check/): four questions decide whether a battery needs a passport
 - [Beispiel](${BASE}/digitaler-produktpass-beispiel/): a live example passport
+- [passports.json](${BASE}/passports.json): machine-readable index of all passports on this site
 - [DPP-Software](${BASE}/dpp-software/), [DPP software](${BASE}/en/dpp-software/): what the tool covers and what it does not
 - [Editor](${BASE}/editor/): create a passport in the browser
 - [Source code](${REPO})

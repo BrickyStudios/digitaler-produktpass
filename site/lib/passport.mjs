@@ -11,12 +11,14 @@ const UI = {
     model: 'Modelldaten', scan: 'Dieser QR-Code führt zu diesem Pass.', data: 'Maschinenlesbar (JSON)',
     restricted: 'Weitere Angaben für berechtigte Stellen (detaillierte Zusammensetzung, Demontage, Prüfberichte) auf Anfrage:',
     made_with: 'Erstellt mit Passwerk, Open Source', basis: 'Rechtsgrundlage', empty: 'nicht angegeben',
+    source: 'Quelle', labels: 'Etiketten drucken', updated: 'Stand', history: 'Änderungsverlauf', labelsTitle: 'QR-Etiketten',
   },
   en: {
     passport: 'Digital product passport', serial: 'Serial number', made: 'Date of manufacture',
     model: 'Model data', scan: 'This QR code links to this passport.', data: 'Machine-readable (JSON)',
     restricted: 'Further information for parties with a legitimate interest (detailed composition, dismantling, test reports) on request:',
     made_with: 'Made with Passwerk, open source', basis: 'Legal basis', empty: 'not stated',
+    source: 'Source', labels: 'Print labels', updated: 'Updated', history: 'Change history', labelsTitle: 'QR labels',
   },
 };
 
@@ -70,6 +72,8 @@ export function validate(p) {
     if (fd.kind === 'number' && !Number.isFinite(Number(String(v).replace(',', '.')))) errors.push(`${fd.label.de}: keine Zahl`);
     if (fd.options && !fd.options.some((o) => o.value === v)) errors.push(`${fd.label.de}: unbekannter Wert ${v}`);
   }
+
+  if (p.sources !== undefined && (typeof p.sources !== 'object' || Array.isArray(p.sources) || Object.values(p.sources).some((v) => typeof v !== 'string'))) errors.push('sources: Objekt aus Feldname und Quellenangabe (Text)');
 
   const seen = new Set();
   for (const it of p.items ?? []) {
@@ -129,13 +133,13 @@ h1{font-size:1.9rem;line-height:1.2;margin:0 0 .4rem}
 h2{font-size:1.05rem;margin:2rem 0 .5rem}
 .fields{margin:0;border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line)}
 .row dt{color:var(--muted);font-size:.92rem}.row dd{margin:0;overflow-wrap:anywhere}.ref{display:block;font-size:.72rem;opacity:.75}
-.empty{color:var(--muted);font-style:italic}a{color:var(--accent)}
+.empty{color:var(--muted);font-style:italic}.src{display:block;font-size:.75rem;color:var(--muted)}a{color:var(--accent)}
 .note{margin-top:2rem;padding:1rem;border:1px solid var(--line);border-radius:8px;font-size:.92rem}
 footer{margin-top:2.5rem;font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
 @media (max-width:560px){.top{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:.1rem}}
 @media print{body{background:#fff;color:#000}footer a{color:#000}}`;
 
-export function renderPassport(p, { url, item = null, modelUrl = null } = {}) {
+export function renderPassport(p, { url, item = null, modelUrl = null, labelsUrl = null, updated = null, historyUrl = null } = {}) {
   const lang = p.language ?? 'de';
   const t = UI[lang];
   const tpl = TEMPLATES[p.template];
@@ -151,7 +155,8 @@ export function renderPassport(p, { url, item = null, modelUrl = null } = {}) {
         .filter((fd) => fd.key !== 'productName' && fd.key !== 'restrictedAccess')
         .map((fd) => {
           const v = p[fd.key];
-          const dd = isEmpty(v) ? `<span class="empty">${t.empty}</span>` : valueHtml(fd, v, lang);
+          const src = isEmpty(v) || isEmpty(p.sources?.[fd.key]) ? '' : `<span class="src">${t.source}: ${esc(p.sources[fd.key])}</span>`;
+          const dd = isEmpty(v) ? `<span class="empty">${t.empty}</span>` : valueHtml(fd, v, lang) + src;
           return `<div class="row"><dt>${esc(fd.label[lang])}<span class="ref">${esc(refText(fd.ref, lang))}</span></dt><dd>${dd}</dd></div>`;
         })
         .join('');
@@ -161,6 +166,7 @@ export function renderPassport(p, { url, item = null, modelUrl = null } = {}) {
 
   const restricted = isEmpty(p.restrictedAccess) ? '' : `<p class="note">${t.restricted} ${valueHtml({}, p.restrictedAccess, lang)}</p>`;
   const data = { ...p, items: undefined, ...(item && { item }), uri: url };
+  const safeHistory = historyUrl && safeUrl(historyUrl);
 
   return `<!doctype html>
 <html lang="${lang}">
@@ -187,7 +193,42 @@ ${url ? `<div class="qr">${qrSvg(url)}<p>${t.scan}</p></div>` : ''}
 </div>
 ${groups}
 ${restricted}
-<footer><span>${t.basis}: ${esc(tpl.law[lang])}</span>${url ? `<a href="passport.json">${t.data}</a>` : ''}<a href="${REPO_URL}">${t.made_with}</a></footer>
+<footer><span>${t.basis}: ${esc(tpl.law[lang])}</span>${updated ? `<span>${t.updated}: <time datetime="${esc(updated)}">${esc(updated)}</time></span>` : ''}${safeHistory ? `<a href="${esc(safeHistory)}">${t.history}</a>` : ''}${url ? `<a href="passport.json">${t.data}</a>` : ''}${labelsUrl ? `<a href="${esc(labelsUrl)}">${t.labels}</a>` : ''}<a href="${REPO_URL}">${t.made_with}</a></footer>
+</main>
+</body>
+</html>
+`;
+}
+
+// Printable sheet with one QR label per serial number (A4, three across).
+export function renderLabels(p, labels) {
+  const lang = p.language ?? 'de';
+  const t = UI[lang];
+  const cards = labels
+    .map(({ url, serial }) => `<figure>${qrSvg(url)}<figcaption><b>${esc(p.productName)}</b><br>${p.gtin ? `GTIN ${esc(gtin14(p.gtin))}<br>` : ''}${t.serial} ${esc(serial)}</figcaption></figure>`)
+    .join('\n');
+  return `<!doctype html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>${t.labelsTitle}: ${esc(p.productName)}</title>
+<style>
+@page{size:A4;margin:10mm}
+body{margin:0;font:12px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:#111;background:#fff}
+main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6mm;padding:10mm}
+figure{margin:0;display:grid;grid-template-columns:24mm 1fr;gap:3mm;align-items:center;padding:3mm;border:1px dashed #999;break-inside:avoid}
+figure svg{width:24mm;height:24mm}
+figcaption{overflow-wrap:anywhere}
+.hint{padding:10mm 10mm 0;font-size:14px}
+@media print{.hint{display:none}main{padding:0}}
+</style>
+</head>
+<body>
+<p class="hint">${esc(p.productName)}: ${labels.length} ${lang === 'de' ? 'Etiketten. Mit Strg+P drucken, Skalierung 100 %.' : 'labels. Print with Ctrl+P at 100 % scale.'}</p>
+<main>
+${cards}
 </main>
 </body>
 </html>
