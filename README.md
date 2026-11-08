@@ -54,6 +54,12 @@ Passwerk erzeugt den öffentlichen Teil dieses Passes als statische Webseiten. S
 - **Langzeitarchiv.** Der Pass muss erreichbar bleiben, auch wenn Ihr Unternehmen aufhört (Art. 78 Buchst. e). Ein GitHub-Konto allein sichert das nicht. Spiegeln Sie die Seiten auf eine eigene Domain mit Hosting-Vertrag.
 - **Rechtsberatung.** Passwerk bildet die Felder aus dem Gesetzestext ab. Ob Ihr Pass vollständig ist, klären Sie in Ihrer Konformitätsbewertung.
 
+## Aufbau
+
+<p align="center"><img src="docs/architektur.png" width="900" alt="Architektur: Der Editor im Browser schickt Dokumente und API-Schlüssel nur an die Claude API, die Passdatei geht von Hand ins GitHub-Repository, GitHub Actions baut daraus die Seiten auf GitHub Pages. Der Schlüssel gelangt nie ins Repository."></p>
+
+Quelle der Grafik: [`docs/architektur.html`](docs/architektur.html).
+
 ## Schnellstart
 
 ```sh
