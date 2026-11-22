@@ -1,6 +1,6 @@
 {
   "name": "digitaler-produktpass",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Passwerk: open-source digital product passport (DPP) and EU battery passport generator. JSON in, passport pages with QR codes out, free hosting on GitHub Pages.",
   "type": "module",
   "private": true,

@@ -8,14 +8,14 @@ export const REPO_URL = 'https://github.com/BrickyStudios/digitaler-produktpass'
 const UI = {
   de: {
     passport: 'Digitaler Produktpass', serial: 'Seriennummer', made: 'Herstellungsdatum',
-    model: 'Modelldaten', scan: 'Dieser QR-Code führt zu diesem Pass.', data: 'Maschinenlesbar (JSON)',
+    model: 'Modelldaten', scan: 'Dieser QR-Code führt zu diesem Pass', data: 'Maschinenlesbar (JSON)',
     restricted: 'Weitere Angaben für berechtigte Stellen (detaillierte Zusammensetzung, Demontage, Prüfberichte) auf Anfrage:',
     made_with: 'Erstellt mit Passwerk, Open Source', basis: 'Rechtsgrundlage', empty: 'nicht angegeben',
     source: 'Quelle', labels: 'Etiketten drucken', updated: 'Stand', history: 'Änderungsverlauf', labelsTitle: 'QR-Etiketten',
   },
   en: {
     passport: 'Digital product passport', serial: 'Serial number', made: 'Date of manufacture',
-    model: 'Model data', scan: 'This QR code links to this passport.', data: 'Machine-readable (JSON)',
+    model: 'Model data', scan: 'This QR code links to this passport', data: 'Machine-readable (JSON)',
     restricted: 'Further information for parties with a legitimate interest (detailed composition, dismantling, test reports) on request:',
     made_with: 'Made with Passwerk, open source', basis: 'Legal basis', empty: 'not stated',
     source: 'Source', labels: 'Print labels', updated: 'Updated', history: 'Change history', labelsTitle: 'QR labels',
@@ -92,6 +92,11 @@ function valueHtml(fd, v, lang) {
     const o = fd.options.find((x) => x.value === v);
     return esc(o ? o[lang] : v);
   }
+  if (fd.kind === 'number') {
+    // One number format per page: 2,9 on German pages, 2.9 on English ones.
+    const n = Number(String(v).replace(',', '.'));
+    if (Number.isFinite(n)) return n.toLocaleString(lang === 'en' ? 'en-GB' : 'de-DE', { maximumFractionDigits: 6 });
+  }
   if (fd.kind === 'url') {
     const u = safeUrl(v);
     return u ? `<a href="${esc(u)}" rel="noopener">${esc(u.replace(/^https?:\/\//, ''))}</a>` : esc(v);
@@ -124,20 +129,20 @@ const CSS = `
 /* Passwerk palette (cobalt, hue 258): kept well away from teal/green brand colours */
 :root{--ink:oklch(21% .028 262);--muted:oklch(48% .018 258);--line:oklch(90% .009 252);--paper:oklch(98.6% .005 250);--accent:oklch(52% .19 258)}
 @media (prefers-color-scheme:dark){:root{--ink:oklch(93% .01 250);--muted:oklch(72% .022 256);--line:oklch(33% .024 262);--paper:oklch(21% .024 262);--accent:oklch(76% .13 254)}}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:46rem;margin:0 auto;padding:2rem 1rem 3rem}
-.kind{color:var(--accent);font-weight:600;margin:0 0 1rem}
-h1{font-size:1.9rem;line-height:1.2;margin:0 0 .4rem}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+main{max-width:46rem;margin:0 auto;padding:2rem 1.5rem 3rem}
+.kind{color:var(--accent);font-weight:500;margin:0 0 1rem}
+h1{font-size:1.75rem;font-weight:600;line-height:1.2;margin:0 0 .5rem}
 .top{display:grid;grid-template-columns:1fr 9rem;gap:1.25rem;align-items:start;border-bottom:1px solid var(--line);padding-bottom:1.25rem}
-.qr svg{width:9rem;height:9rem;display:block;border-radius:6px}.qr p{font-size:.75rem;color:var(--muted);margin:.4rem 0 0}
-.ids{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.2rem 1rem;font-size:.95rem}.ids dt{color:var(--muted)}.ids dd{margin:0;font-variant-numeric:tabular-nums}
-h2{font-size:1.05rem;margin:2rem 0 .5rem}
-.fields{margin:0;border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line)}
-.row dt{color:var(--muted);font-size:.92rem}.row dd{margin:0;overflow-wrap:anywhere}.ref{display:block;font-size:.72rem;opacity:.75}
-.empty{color:var(--muted);font-style:italic}.src{display:block;font-size:.75rem;color:var(--muted)}a{color:var(--accent)}
-.note{margin-top:2rem;padding:1rem;border:1px solid var(--line);border-radius:8px;font-size:.92rem}
-footer{margin-top:2.5rem;font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
-@media (max-width:560px){.top{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:.1rem}}
+.qr svg{width:9rem;height:9rem;display:block;border-radius:6px}.qr p{font-size:.75rem;color:var(--muted);margin:.5rem 0 0}
+.ids{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem}.ids dt{color:var(--muted)}.ids dd{margin:0}
+h2{font-size:1.125rem;font-weight:600;margin:2rem 0 .5rem}
+.fields{margin:0;border-top:1px solid var(--line)}.row{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--line)}
+.row dt{color:var(--muted);font-size:.875rem}.row dd{margin:0;overflow-wrap:anywhere}.ref{display:block;font-size:.75rem}
+.empty{color:var(--muted)}.src{display:block;font-size:.75rem;color:var(--muted)}a{color:var(--accent)}
+.note{margin-top:2rem;padding:1rem;border:1px solid var(--line);border-radius:8px;font-size:.875rem}
+footer{margin-top:2.5rem;font-size:.875rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.5rem 1.5rem}
+@media (max-width:560px){.top{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:.25rem}}
 @media print{body{background:#fff;color:#000}footer a{color:#000}}`;
 
 export function renderPassport(p, { url, item = null, modelUrl = null, labelsUrl = null, updated = null, historyUrl = null } = {}) {

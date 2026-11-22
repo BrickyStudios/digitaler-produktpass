@@ -58,6 +58,11 @@ test('item page shows serial and date', () => {
   assert.match(html, /2026-09/);
 });
 
+test('numbers follow the page language', () => {
+  assert.match(renderPassport(battery, {}), /<dd>2,9<\/dd>/);
+  assert.match(renderPassport({ ...battery, language: 'en', weightKg: '1234,5' }, {}), /<dd>1,234\.5<\/dd>/);
+});
+
 test('QR code decodes to the passport URL', (t) => {
   const url = 'https://brickystudios.github.io/digitaler-produktpass/01/09520123456788/21/AK500-000123/';
   const dir = mkdtempSync(join(tmpdir(), 'qr-'));
